@@ -1,7 +1,13 @@
 {% extends 'base.html.twig' %}
 
 {% block contenido %}
-    {% for categoria in categorias %}
-        <p><a href="{{  path('productos', {'categoria':categoria.getId()}) }}">{{categoria.getNombre() }}</a></p>
+    <ul>
+    {% for producto in productos %}
+        <dl>
+            <dt><a href="{{  path('detalles', {'producto':producto.getId()}) }}">{{producto.getNombre() }}</a></dt>
+            <dd>{{producto.getPrecio() }}€</dd>
+            <dd>{{producto.getDescripcion() }}</dd>
+        </dl>
         {% endfor %}    
+    </ul>
     {% endblock %}    

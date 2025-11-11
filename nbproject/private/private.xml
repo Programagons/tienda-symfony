@@ -3,10 +3,9 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/home/gpulcab/proyecto/templates/cabecera.html.twig</file>
-            <file>file:/home/gpulcab/proyecto/templates/base.html.twig</file>
-            <file>file:/home/gpulcab/proyecto/templates/categorias/mostrar_categorias.html.twig</file>
+            <file>file:/home/gpulcab/proyecto/src/Entity/Usuario.php</file>
             <file>file:/home/gpulcab/proyecto/src/Controller/BaseController.php</file>
+            <file>file:/home/gpulcab/proyecto/templates/productos/mostrar_productos.html.twig</file>
         </group>
     </open-files>
 </project-private>

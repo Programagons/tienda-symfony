@@ -9,7 +9,6 @@ use Doctrine\Persistence\ManagerRegistry;
 use App\Entity\Categoria;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-
 #[IsGranted('ROLE_USER')]
 final class BaseController extends AbstractController {
 
@@ -25,8 +24,13 @@ final class BaseController extends AbstractController {
     public function mostrar_productos(ManagerRegistry $em, int $categoria): Response {
         $categoriaObjeto = $em->getRepository(Categoria::class)->find($categoria);
         $productos = $categoriaObjeto->getProductos();
-        return $this->render('productos/mostrar_productos.html.twig'.[
-        'productos' => $productos,
+        return $this->render('productos/mostrar_productos.html.twig', [
+                    'productos' => $productos,
         ]);
+    }
+
+    #[Route('{producto}/detalles', name: 'detalles')]
+    public function mostrar_detalles(): Response {
+        
     }
 }
