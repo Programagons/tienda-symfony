@@ -1,13 +1,22 @@
 {% extends 'base.html.twig' %}
 
 {% block contenido %}
-    <ul>
-    {% for producto in productos %}
-        <dl>
-            <dt><a href="{{  path('detalles', {'producto':producto.getId()}) }}">{{producto.getNombre() }}</a></dt>
-            <dd>{{producto.getPrecio() }}€</dd>
-            <dd>{{producto.getDescripcion() }}</dd>
-        </dl>
-        {% endfor %}    
-    </ul>
-    {% endblock %}    
+    <h1>Productos</h1>
+    <form action="{{ path('anadir') }}">
+        <table id="productos">
+            <th>Nombre</th>
+            <th>Precio</th>
+            <th>Unidades</th>
+            <th>Añadir<th>
+                {% for producto in productos %}
+                <tr>
+                    <td><p><a href="{{  path('detalles', {'producto':producto.getId()}) }}">{{producto.getNombre() }}</a></p></td>
+                    <td><p>{{ producto.getPrecio() }}€</p></td>
+                    <td> <input type="number" name="unidades[]" value="0"> </td>
+                    <td> <input type="hidden" name="productos_id[]" value="{{ producto.getId() }}"></td>
+                        
+                    </td>
+            {% endfor %}    
+        </table>
+            <input type="submit" action="enviar" value="Enviar">
+{% endblock %}    

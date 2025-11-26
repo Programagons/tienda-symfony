@@ -9,10 +9,9 @@ use Doctrine\Persistence\ManagerRegistry;
 /**
  * @extends ServiceEntityRepository<Producto>
  */
-class ProductoRepository extends ServiceEntityRepository
-{
-    public function __construct(ManagerRegistry $registry)
-    {
+class ProductoRepository extends ServiceEntityRepository {
+
+    public function __construct(ManagerRegistry $registry) {
         parent::__construct($registry, Producto::class);
     }
 
@@ -30,7 +29,6 @@ class ProductoRepository extends ServiceEntityRepository
     //            ->getResult()
     //        ;
     //    }
-
     //    public function findOneBySomeField($value): ?Producto
     //    {
     //        return $this->createQueryBuilder('p')
@@ -40,4 +38,15 @@ class ProductoRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+
+
+    public function findProductosByIds(array $productos_ids): array {
+        $em = $this->getEntityManager(); //Transformamos un array de id en un array de Producto
+        foreach ($productos_ids as $producto_id) {
+            $producto = $em->getRepository(Producto::class)->find($producto_id);
+            $productos[] = $producto;
+        }
+
+        return $productos;
+    }
 }
