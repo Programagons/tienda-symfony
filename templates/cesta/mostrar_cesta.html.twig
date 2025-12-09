@@ -1,7 +1,16 @@
 {% extends 'base.html.twig' %}
 
-{% block contenido %}
-    {% for categoria in categorias %}
-        <p><a href="{{  path('productos', {'categoria':categoria.getId()}) }}">{{categoria.getNombre() }}</a></p>
-        {% endfor %}    
-    {% endblock %}    
+{% block title %}Hello CestaController{% endblock %}
+
+{% block body %}
+    <h1>Mostrar Cesta</h1>
+    <table>
+        {% for producto in productos %}
+           tr por cada iteración y pintamos producto y unidades
+
+           
+           podemos poner producto.id en lugar de get id
+
+        {% endfor %}
+        {%endblock}
+            

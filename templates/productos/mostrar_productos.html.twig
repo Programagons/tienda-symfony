@@ -2,7 +2,7 @@
 
 {% block contenido %}
     <h1>Productos</h1>
-    <form action="{{ path('anadir') }}">
+    <form method="post" action="{{ path('anadir') }}">
         <table id="productos">
             <th>Nombre</th>
             <th>Precio</th>

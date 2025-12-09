@@ -12,16 +12,17 @@ class CestaCompra {
     protected $productos;
     protected $unidades;
 
-    public function _construct(RequestStack $requestStack) {
-        $this->$requestStack = $requestStack;
+    public function __construct(RequestStack $requestStack) {
+        $this->requestStack = $requestStack;
     }
 
-    protected function carga_cesta() {
-        $sesion = $this->requestStack->getSession();
+    //Recupera el array de productos y unidades de la sesión
+    protected function cargar_cesta() {
+        $session = $this->requestStack->getSession();
         // Si hay productos en la sesión los cargamos en los atributos del objeto
-        if ($sesion->has("productos") && $sesion->has("unidades")) {
-            $this->productos = $sesion->get("productos");
-            $this->unidades = $sesion->get("unidades");
+        if ($session->has('productos') && $session->has('unidades')) {
+            $this->productos = $session->get('productos');
+            $this->unidades = $session->get('unidades');
         } else {
             $this->productos = [];
             $this->unidades = [];
@@ -30,47 +31,45 @@ class CestaCompra {
 
     protected function guardar_cesta() {
         $sesion = $this->requestStack->getSession();
-        $sesion->set($this->productos);
-        $sesion->set($this->unidades);
+        $sesion->set('productos',$this->productos);
+        $sesion->set('unidades',$this->unidades);
     }
 
     public function get_Productos() {
-        $this->carga_cesta();
+        $this->cargar_cesta();
         return $this->productos;
     }
 
     public function get_Unidades() {
-        $this->carga_cesta();
+        $this->cargar_cesta();
         return $this->unidades;
     }
 
+    //Recibe los productos y unidades del formulario como parámetros
     public function cargar_productos($productos, $unidades) {
+        $this->cargar_cesta(); //Cargamos la cesta
         //Cargamos los productos en la sesión
         for ($i = 0; $i < count($productos); $i++) {
             if ($unidades[$i] != 0) {
+                //carga un producto en la sesión
                 $this->cargar_producto($productos[$i], $unidades[$i]);
             }
         }
+        $this->guardar_cesta();
     }
 
     // Recibe como parámetro un objeto tipo Producto
-    public function cargar_producto($producto, $unidades) {
-        $this->carga_cesta(); //Cargamos la cesta
+    public function cargar_producto($producto, $unidad) {
         // Ahora podemos utilizar productos y unidades
         $codigo = $producto->getCod(); //Recibe el objeto de tipo Producto
         //Cargamos el código del producto a la cesta
         //Si existe el producto, cargamos las unidades a la cesta
-        if (array_key_exists($codigo, $this->productos)) {
-            //Buscamos la posición de los productos y en esa posición sumamos unidades
-            $codigos_productos = array_keys($this->productos);
-            $posicion = array_search($codigo, $codigos_productos);
-            $unidades[$posicion] += $unidades;
-        } else {
-            $productos[] = ['$codigo' => $producto];
-            $unidades[] = [$unidades];
+        if (array_key_exists($codigo, $this->productos)) { // Está en la cesta
+            //Le sumamos las unidades
+            $this->unidades[$codigo] += $unidad;
+        } else if($unidad != 0) { // Si no está en la cesta, lo agregamos con las unidades(si tiene)
+            $this->productos[$codigo] = $producto;
+            $this->unidades[$codigo] = $unidad;
         }
-
-
-        $this->guardar_cesta();
     }
 }
