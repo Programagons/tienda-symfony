@@ -57,11 +57,18 @@ final class BaseController extends AbstractController {
 
     #[Route('/cesta', name: 'cesta')]
     public function cesta(CestaCompra $cesta) {
-        $cesta->get_Productos();
-        $cesta->get_Unidades();
         return $this->render('cesta/mostrar_cesta.html.twig', [
                     'productos' => $cesta->get_Productos(),
                     'unidades' => $cesta->get_Unidades()
         ]);
+    }
+    
+    #[Route('/eliminar', name: 'eliminar')]
+    public function eliminar(Request $request, CestaCompra $cesta){
+        // Recogemos los datos de entrada (los valores de la petición post)
+        $producto_id = $request->request->get("producto_id");
+        $unidades = $request->request->get("unidades");
+        $cesta->eliminar_producto($producto_id, $unidades);
+        return $this->redirectToRoute('cesta');
     }
 }

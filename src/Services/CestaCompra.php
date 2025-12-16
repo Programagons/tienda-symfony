@@ -72,4 +72,18 @@ class CestaCompra {
             $this->unidades[$codigo] = $unidad;
         }
     }
+    
+    public function eliminar_producto($codigo_producto, $unidades){
+        // Si el producto está en nuestros productos
+        if (array_key_exists($codigo_producto, $this->productos)){
+            // Le restamos las unidades
+            $this->unidades[$codigo_producto] -= $unidades;
+            // Si al restar las unidades, se quedan en negativo o 0, lo sacamos de la cesta
+            if ($this->unidades[$codigo_producto] <= 0){
+                unset($this->unidades[$codigo_producto]);
+                unset($this->productos[$codigo_producto]);
+            }
+            $this->guardar_cesta();
+        }
+    }
 }

@@ -5,11 +5,27 @@
 {% block body %}
     <h1>Mostrar Cesta</h1>
     <table>
+        <tr>
+            <th>Nombre del Producto</th>
+            <th>Descripción</th>
+            <th>Precio</th>
+            <th>Unidades</th>
+            <th>Eliminar</th>
+        </tr>
         {% for producto in productos %}
-           tr por cada iteración y pintamos producto y unidades
+            <tr>
+                <td>{{ producto.nombre }}</td>
+                <td>{{ producto.descripcion}}</td>
+                <td>{{ producto.precio}}</td>
+                <td>{{ producto.unidades}}</td>
+                <td><form method="POST" action="{{ path('eliminar') }}">
+                        <input type="number" value="1" min="1" name="unidades">
+                            <input type="hidden" name="producto_id" value="{{ producto.id }}">
+                        <input type="submit" name="eliminar_producto" value="Eliminar">
+                    </form>
+            </tr>
 
-           
-           podemos poner producto.id en lugar de get id
+
 
         {% endfor %}
         {%endblock}
