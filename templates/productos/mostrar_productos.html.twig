@@ -7,7 +7,6 @@
             <th>Nombre</th>
             <th>Precio</th>
             <th>Unidades</th>
-            <th>Añadir<th>
                 {% for producto in productos %}
                 <tr>
                     <td><p><a href="{{  path('detalles', {'producto':producto.getId()}) }}">{{producto.getNombre() }}</a></p></td>

@@ -74,6 +74,8 @@ class CestaCompra {
     }
     
     public function eliminar_producto($codigo_producto, $unidades){
+        // Cargar la sesión de la cesta
+        $this->cargar_cesta();
         // Si el producto está en nuestros productos
         if (array_key_exists($codigo_producto, $this->productos)){
             // Le restamos las unidades

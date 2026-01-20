@@ -15,7 +15,6 @@ use App\Services\CestaCompra;
 
 #[IsGranted('ROLE_USER')]
 final class BaseController extends AbstractController {
-
     #[Route('/categorias', name: 'categorias')]
     public function mostrar_categorias(ManagerRegistry $em): Response {
         $categorias = $em->getRepository(Categoria::class)->findAll();
