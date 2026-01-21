@@ -10,11 +10,18 @@ use App\Entity\Categoria;
 use App\Entity\Producto;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
+use Symfony\Component\Mime\Address;
+use App\Entity\Pedido;
+use App\Entity\PedidoProducto;
 use Symfony\Component\HttpFoundation\Request;
 use App\Services\CestaCompra;
 
 #[IsGranted('ROLE_USER')]
 final class BaseController extends AbstractController {
+#PRUEBA
+
     #[Route('/categorias', name: 'categorias')]
     public function mostrar_categorias(ManagerRegistry $em): Response {
         $categorias = $em->getRepository(Categoria::class)->findAll();
@@ -47,10 +54,10 @@ final class BaseController extends AbstractController {
         //Cargamos los productos en la sesión
         $cesta->cargar_productos($productos, $unidades);
         $valores_productos = array_values($productos);
-        
+
         //Sacamos la categoría del producto 
         //$categoria_id = $valores_productos[0] -> getCategoria() -> getId();
-        
+
         return $this->redirectToRoute('productos', ['categoria' => $valores_productos[0]->getCategoria()->getId()]);
     }
 
@@ -61,13 +68,63 @@ final class BaseController extends AbstractController {
                     'unidades' => $cesta->get_Unidades()
         ]);
     }
-    
+
     #[Route('/eliminar', name: 'eliminar')]
-    public function eliminar(Request $request, CestaCompra $cesta){
+    public function eliminar(Request $request, CestaCompra $cesta) {
         // Recogemos los datos de entrada (los valores de la petición post)
         $producto_id = $request->request->get("producto_id");
         $unidades = $request->request->get("unidades");
         $cesta->eliminar_producto($producto_id, $unidades);
         return $this->redirectToRoute('cesta');
+    }
+
+    #[Route('/pedido', name: 'pedido')]
+    public function pedido(ManagerRegistry $em, CestaCompra $cesta) {
+        
+// Obtenemos productos de la sesión
+        $productos = $cesta->get_Productos();
+        $unidades = $cesta->get_Unidades();
+        
+        // Flag para los errores
+        if (count($productos) == 0){
+            // Error = 1 cuando NO hay productos en la cesta
+             $error = 1;
+        }else{
+            
+            
+        // Generamos un nuevo objeto pedido con sus setters
+        $pedido = new Pedido();
+
+        // Setteamos el coste del pedido
+        $pedido->setCoste($cesta->calcular_coste($unidades, $productos));
+
+        //Setteamos la fecha del pedido
+        $pedido->setFecha(new \Datetime());
+
+        // Setteamos el usuario
+        $pedido->setUsuario($this->getUser());
+
+        // Lo insertamos en la base de datos
+        $em->persist($pedido);
+
+        foreach ($this->productos as $codigo_producto => $producto) {
+            // Cargamos los pedidos en pedidoproducto
+            $pedidoProducto = new PedidoProducto();
+            $pedidoProducto->setPedido($pedido);
+            $pedidoProducto->setProducto($producto);
+            $pedidoProducto->setUnidades($unidades[$codigo_producto]);
+
+            $em->persist($pedidoproducto);
+        }
+        try {
+            //Guardamos todo con flush
+            $em->flush();
+        } catch (Exception $ex) {
+            $error = 2;
+        }
+        return $this->render('pedido.html.twig', [
+        'productos' => $error, 
+        'pedido_id' => $pedido->getId()
+    ]);
     }
 }

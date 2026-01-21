@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Pedido Confirmado{% endblock %}    
+
+{% block body %}
+
+    <h1>Su pedido se ha realizado correctamente</h1>
+    <p>ID: {{ pedido_id }}</p>
+    
+    {{% if error == 1}}
+    
+    {{ % endif % }}
+    
+{% endblock %}    
+

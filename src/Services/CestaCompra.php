@@ -88,4 +88,18 @@ class CestaCompra {
             $this->guardar_cesta();
         }
     }
+    
+    //Vamos a calcular el coste de la cesta al completo
+    public function calcular_coste($unidades, $producto){
+        // Variable para el coste
+        $costeTotal = 0;
+        //Array de objetos, vamos sacando por cada producto
+        
+        foreach ($this->productos as $codigo_producto => $producto) {
+            // Multiplicamos el precio del producto por sus unidades
+            // Sumamos al coste total todo lo que obtenemos
+            $costeTotal += $producto -> getPrecio() * $this->unidades[$codigo_producto];
+        }
+        return $costeTotal;
+    }
 }
