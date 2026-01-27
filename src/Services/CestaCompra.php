@@ -89,8 +89,8 @@ class CestaCompra {
         }
     }
     
-    //Vamos a calcular el coste de la cesta al completo
-    public function calcular_coste($unidades, $producto){
+        //Vamos a calcular el coste de la cesta al completo
+    public function calcular_coste(){
         // Variable para el coste
         $costeTotal = 0;
         //Array de objetos, vamos sacando por cada producto

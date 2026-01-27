@@ -18,7 +18,7 @@
                 <td>{{ producto.nombre }}</td>
                 <td>{{ producto.descripcion}}</td>
                 <td>{{ producto.precio}}</td>
-                <td>{{ unidades_producto}}</td>
+                <td>{{ unidades_producto }}</td>
                 <td><form method="POST" action="{{ path('eliminar') }}">
                         <input type="number" value="1" min="1" name="unidades">
                         <input type="hidden" name="producto_id" value="{{ producto.cod }}">
