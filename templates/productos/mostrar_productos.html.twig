@@ -1,21 +1,42 @@
 {% extends 'base.html.twig' %}
 
+{% block title %}Lista de Productos{% endblock %}
+
 {% block contenido %}
     <h1>Productos</h1>
-    <form method="post" action="{{ path('anadir') }}">
-        <table id="productos">
-            <th>Nombre</th>
-            <th>Precio</th>
-            <th>Unidades</th>
-                {% for producto in productos %}
-                <tr>
-                    <td><p><a href="{{  path('detalles', {'producto':producto.getId()}) }}">{{producto.getNombre() }}</a></p></td>
-                    <td><p>{{ producto.getPrecio() }}€</p></td>
-                    <td> <input type="number" name="unidades[]" value="0"> </td>
-                    <td> <input type="hidden" name="productos_id[]" value="{{ producto.getId() }}"></td>
-                        
-                    </td>
-            {% endfor %}    
-        </table>
-            <input type="submit" action="enviar" value="Enviar">
-{% endblock %}    
+
+    {% if productos is empty %}
+        <p>No hay productos disponibles.</p>
+    {% else %}
+        <form method="post" action="{{ path('anadir') }}">
+            <table border="1" cellpadding="5" id="productos">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Precio</th>
+                        <th>Unidades</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for producto in productos %}
+                        <tr>
+                            <td>
+                                <a href="{{ path('detalles', {'producto': producto.getId()}) }}">
+                                    {{ producto.getNombre() }}
+                                </a>
+                            </td>
+                            <td>{{ producto.getPrecio() }}€</td>
+                            <td>
+                                <input type="number" name="unidades[]" value="0" min="0">
+                                <input type="hidden" name="productos_id[]" value="{{ producto.getId() }}">
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <br>
+            <input type="submit" value="Enviar">
+        </form>
+    {% endif %}
+{% endblock %}

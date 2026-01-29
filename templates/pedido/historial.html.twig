@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block contenido %}
+
+<h1>Historial de pedidos</h1>
+
+{% if pedidos is empty %}
+    <p>No has realizado ningún pedido.</p>
+{% else %}
+    <table border="1" cellpadding="8" cellspacing="0">
+        <thead>
+            <tr>
+                <th>ID Pedido</th>
+                <th>Fecha</th>
+                <th>Coste (€)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for pedido in pedidos %}
+                <tr>
+                    <td>#{{ pedido.id }}</td>
+                    <td>{{ pedido.fecha|date('d/m/Y H:i') }}</td>
+                    <td>{{ pedido.coste }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endif %}
+
+{% endblock %}

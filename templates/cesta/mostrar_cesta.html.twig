@@ -1,32 +1,46 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello CestaController{% endblock %}
+{% block title %}Cesta de Productos{% endblock %}
 
-{% block body %}
+{% block contenido %}
     <h1>Mostrar Cesta</h1>
-    <table>
-        <tr>
-            <th>Nombre del Producto</th>
-            <th>Descripción</th>
-            <th>Precio</th>
-            <th>Unidades</th>
-            <th>Eliminar</th>
-        </tr>
-        {% for cod, producto in productos %}
-            {% set unidades_producto = unidades[cod] %}
-            <tr>
-                <td>{{ producto.nombre }}</td>
-                <td>{{ producto.descripcion}}</td>
-                <td>{{ producto.precio}}</td>
-                <td>{{ unidades_producto }}</td>
-                <td><form method="POST" action="{{ path('eliminar') }}">
-                        <input type="number" value="1" min="1" name="unidades">
-                        <input type="hidden" name="producto_id" value="{{ producto.cod }}">
-                        <input type="submit" name="eliminar_producto" value="Eliminar">
-                    </form>
-            </tr>
 
+    {% if productos is empty %}
+        <p>Tu cesta está vacía.</p>
+    {% else %}
+        <table border="1" cellpadding="5">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Descripción</th>
+                    <th>Precio</th>
+                    <th>Unidades</th>
+                    <th>Eliminar</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for cod, producto in productos %}
+                    <tr>
+                        <td>{{ producto.nombre }}</td>
+                        <td>{{ producto.descripcion }}</td>
+                        <td>{{ producto.precio }}</td>
+                        <td>{{ unidades[cod] }}</td>
+                        <td>
+                            <form method="POST" action="{{ path('eliminar') }}">
+                                <input type="number" name="unidades" value="1" min="1">
+                                <input type="hidden" name="producto_id" value="{{ producto.cod }}">
+                                <button type="submit">Eliminar</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
 
+        <br>
 
-        {% endfor %}
-    {%endblock%}
+        <form method="POST" action="{{ path('pedido') }}">
+            <button type="submit">Enviar pedido</button>
+        </form>
+    {% endif %}
+{% endblock %}

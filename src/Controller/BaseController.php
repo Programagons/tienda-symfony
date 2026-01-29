@@ -18,7 +18,7 @@ use App\Entity\Usuario;
 use App\Entity\PedidoProducto;
 use Symfony\Component\HttpFoundation\Request;
 use App\Services\CestaCompra;
-use Symfony\Bridge\Twig\mime\TemplatedEmail;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 
 #[IsGranted('ROLE_USER')]
 final class BaseController extends AbstractController {
@@ -81,11 +81,16 @@ final class BaseController extends AbstractController {
     }
 
     #[Route('/pedido', name: 'pedido')]
-    public function pedido(ManagerRegistry $em, CestaCompra $cesta) {
+    public function pedido(EntityManagerInterface $em, CestaCompra $cesta, MailerInterface $mailer) {
 
-// Obtenemos productos de la sesión
+        // Variables
+        $error = 0;
+        // Obtenemos productos de la sesión
         $productos = $cesta->get_Productos();
         $unidades = $cesta->get_Unidades();
+
+        // Si la cesta está vacía, como el codigo no puede ser null, nos daría error
+        $pedido = $pedido ?? null;
 
         // Flag para los errores
         if (count($productos) == 0) {
@@ -96,7 +101,7 @@ final class BaseController extends AbstractController {
             $pedido = new Pedido();
 
             // Setteamos el coste del pedido
-            $pedido->setCoste($cesta->calcular_coste($unidades, $productos));
+            $pedido->setCoste($cesta->calcular_coste());
 
             //Setteamos la fecha del pedido
             $pedido->setFecha(new \Datetime());
@@ -107,7 +112,7 @@ final class BaseController extends AbstractController {
             // Lo insertamos en la base de datos
             $em->persist($pedido);
 
-            foreach ($this->productos as $codigo_producto => $productoCesta) {
+            foreach ($productos as $codigo_producto => $productoCesta) {
                 // Cargamos los pedidos en pedidoproducto
                 $pedidoProducto = new PedidoProducto();
                 $pedidoProducto->setPedido($pedido);
@@ -120,43 +125,58 @@ final class BaseController extends AbstractController {
             try {
                 //Guardamos todo con flush
                 $em->flush();
-                $pedido_id = $pedido->getId();
             } catch (Exception $ex) {
-                dd($ex->getMessage());
                 $error = 2;
             }
-            
 
-            if (!error) {
+
+            if (!$error) {
                 // Obtenemos el id del usuario desde la sesión
-                $usuario_id = $this->getUser()->getUserIdentifier();
+                $usuario_id = $this->getUser()->getId();
                 $usuario = $em->getRepository(Usuario::class)->find($usuario_id);
                 // Así sacamos el email del usuario
                 $destination_email = $usuario->getEmail();
 
                 // Mandamos el correo al email del usuario
-                
-                $email = (new TemplatedEmail())
-                        ->from('programagons@gmail.com')
-                        ->to(new Address($destination_email))
-                        ->subject('Confirmación de pedido' . $pedido->getId())
 
+                $email = (new TemplatedEmail())
+                        ->from(new Address('programagons@gmail.com', 'Tienda Symfony'))
+                        ->to(new Address($destination_email))
+                        ->subject('Confirmación de pedido #' . $pedido->getId())
                         // indicamos la ruta de la plantilla
                         ->htmlTemplate('correo.html.twig')
                         ->locale('es')
                         // pasamos variables (clave => valor) a la plantilla
                         ->context([
-                            'pedido_id' => $pedido->getId(), 'productos' => $cesta->get_Productos(), 'unidades' => $cesta->get_Unidades(),
+                            'pedido_id' => $pedido->getId(),
+                            'productos' => $cesta->get_Productos(),
+                            'unidades' => $cesta->get_Unidades(),
                             'coste' => $cesta->calcular_coste(),
-                        ])
-                ;
+                ]);
                 $mailer->send($email);
             }
         }
 
-        return $this->render('pedido.html.twig', [
+        return $this->render('pedido/pedido.html.twig', [
                     'error' => $error,
-                    'pedido_id' => $pedido->getId()
+                    'pedido_id' => $pedido ? $pedido->getId() : null,
+        ]);
+    }
+
+    #[Route('/historial', name: 'historial')]
+    public function historial(EntityManagerInterface $em): Response {
+        // Obtenemos el usuario logueado
+        $usuario = $this->getUser();
+
+        // Buscamos los pedidos del usuario ordenados por fecha de forma descendente
+        $pedidos = $em->getRepository(Pedido::class)->findBy(
+                ['Usuario' => $usuario],
+                ['fecha' => 'DESC']
+        );
+
+        // Pasamos la información a la plantilla
+        return $this->render('pedido/historial.html.twig', [
+                    'pedidos' => $pedidos
         ]);
     }
 }

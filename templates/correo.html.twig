@@ -1,6 +1,6 @@
 {# templates/correo.html.twig #}
 
-<h1>¡Gracias por su compra {{ app.user.nombre }}!</h1>
+<h1>¡Gracias por su compra {{ app.user.login }}!</h1>
 <h2>Identificador de su pedido: #{{ pedido_id }}</h2>
 
 <h2>Resumen de su compra: </h2>
@@ -13,14 +13,15 @@
         <th>Precio y unidades</th>
         <th>Precio total</th>
     </tr>
-    {% for codigo, producto in productos %}
-     <tr>
-      <td>{{ codigo }}</td>
-      <td>{{ producto.nombre() }}</td>
-      <td>{{ producto.descripcion() }}</td>
-      <td>{{ coste}}€</td>
-     </tr>
+    {% for cod, producto in productos %}
+        <tr>
+            <td>{{ cod }}</td>
+            <td>{{ producto.nombre() }}</td>
+            <td>{{ producto.descripcion() }}</td>
+            <td>{{ producto.precio() }}€ X{{ unidades[cod] }}</td>
+            <td>{{ producto.precio() * unidades[cod] }}€</td>
+        </tr>
     {% endfor %}
 </table>
 
-<p>Precio total: {{ precioTotal }}€</p>
+<p>Precio total: {{ coste }}€</p>
