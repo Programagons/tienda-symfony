@@ -8,10 +8,11 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y \
     curl \
     vim \
     unzip \
+    libicu-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Configuramos los módulos de PHP
-RUN docker-php-ext-install pdo pdo_mysql pdo_pgsql
+RUN docker-php-ext-install pdo pdo_mysql pdo_pgsql intl
 
 # Instalamos y habilitamos Xdebug
 RUN pecl install xdebug \

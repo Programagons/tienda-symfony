@@ -3,8 +3,9 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/home/gpulcab/proyecto/templates/pedido/historial.html.twig</file>
-            <file>file:/home/gpulcab/proyecto/src/Controller/BaseController.php</file>
+            <file>file:/home/gpulcab/proyecto/src/Controller/Admin/DashboardController.php</file>
+            <file>file:/home/gpulcab/proyecto/src/Controller/Admin/ProductoCrudController.php</file>
+            <file>file:/home/gpulcab/proyecto/src/Entity/Producto.php</file>
         </group>
     </open-files>
 </project-private>
