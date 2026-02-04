@@ -22,7 +22,7 @@ class Usuario implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $login = null;
 
     /**
-     * @var list<string> The user roles
+     * @var list<string>
      */
     #[ORM\Column]
     private array $roles = [];
@@ -32,6 +32,11 @@ class Usuario implements UserInterface, PasswordAuthenticatedUserInterface
      */
     #[ORM\Column]
     private ?string $password = null;
+
+    /**
+     * @var string|null Plain password (NOT persisted)
+     */
+    private ?string $plainPassword = null;
 
     #[ORM\Column(length: 255)]
     private ?string $email = null;
@@ -50,7 +55,6 @@ class Usuario implements UserInterface, PasswordAuthenticatedUserInterface
         $this->pedidos = new ArrayCollection();
     }
 
-
     public function getId(): ?int
     {
         return $this->id;
@@ -64,72 +68,65 @@ class Usuario implements UserInterface, PasswordAuthenticatedUserInterface
     public function setLogin(string $login): static
     {
         $this->login = $login;
-
         return $this;
     }
 
-    /**
-     * A visual identifier that represents this user.
-     *
-     * @see UserInterface
-     */
     public function getUserIdentifier(): string
     {
         return (string) $this->login;
     }
 
-    /**
-     * @see UserInterface
-     */
     public function getRoles(): array
     {
         $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
         $roles[] = 'ROLE_USER';
 
         return array_unique($roles);
     }
 
-    /**
-     * @param list<string> $roles
-     */
     public function setRoles(array $roles): static
     {
         $this->roles = $roles;
-
         return $this;
     }
 
     /**
-     * @see PasswordAuthenticatedUserInterface
+     * Password hash
      */
     public function getPassword(): ?string
     {
         return $this->password;
     }
 
+    /**
+     * Se establece SOLO el hash aquí
+     */
     public function setPassword(string $password): static
     {
         $this->password = $password;
-
         return $this;
     }
 
     /**
-     * Ensure the session doesn't contain actual password hashes by CRC32C-hashing them, as supported since Symfony 7.3.
+     * Plain password (no persistido)
      */
-    public function __serialize(): array
+    public function getPlainPassword(): ?string
     {
-        $data = (array) $this;
-        $data["\0".self::class."\0password"] = hash('crc32c', $this->password);
-
-        return $data;
+        return $this->plainPassword;
     }
 
-    #[\Deprecated]
+    public function setPlainPassword(?string $plainPassword): static
+    {
+        $this->plainPassword = $plainPassword;
+        return $this;
+    }
+
+    /**
+     * Limpia datos sensibles temporales
+     */
     public function eraseCredentials(): void
     {
-        // @deprecated, to be removed when upgrading to Symfony 8
+        $this->plainPassword = null;
     }
 
     public function getEmail(): ?string
@@ -140,7 +137,6 @@ class Usuario implements UserInterface, PasswordAuthenticatedUserInterface
     public function setEmail(string $email): static
     {
         $this->email = $email;
-
         return $this;
     }
 
@@ -152,7 +148,6 @@ class Usuario implements UserInterface, PasswordAuthenticatedUserInterface
     public function setTlf(?string $tlf): static
     {
         $this->tlf = $tlf;
-
         return $this;
     }
 
@@ -177,7 +172,6 @@ class Usuario implements UserInterface, PasswordAuthenticatedUserInterface
     public function removePedido(Pedido $pedido): static
     {
         if ($this->pedidos->removeElement($pedido)) {
-            // set the owning side to null (unless already changed)
             if ($pedido->getUsuario() === $this) {
                 $pedido->setUsuario(null);
             }
@@ -185,5 +179,4 @@ class Usuario implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
-
 }

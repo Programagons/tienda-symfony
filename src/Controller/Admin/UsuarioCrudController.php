@@ -3,26 +3,54 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Usuario;
+use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
-use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class UsuarioCrudController extends AbstractCrudController
 {
+    private UserPasswordHasherInterface $passwordHasher;
+
+    public function __construct(UserPasswordHasherInterface $passwordHasher)
+    {
+        $this->passwordHasher = $passwordHasher;
+    }
+
     public static function getEntityFqcn(): string
     {
         return Usuario::class;
     }
 
-    /*
-    public function configureFields(string $pageName): iterable
+    public function persistEntity(EntityManagerInterface $entityManager, $entityInstance): void
     {
-        return [
-            IdField::new('id'),
-            TextField::new('title'),
-            TextEditorField::new('description'),
-        ];
+        if ($entityInstance instanceof Usuario) {
+            $this->hashPassword($entityInstance);
+        }
+
+        parent::persistEntity($entityManager, $entityInstance);
     }
-    */
+
+    public function updateEntity(EntityManagerInterface $entityManager, $entityInstance): void
+    {
+        if ($entityInstance instanceof Usuario) {
+            $this->hashPassword($entityInstance);
+        }
+
+        parent::updateEntity($entityManager, $entityInstance);
+    }
+
+    private function hashPassword(Usuario $usuario): void
+    {
+        if (!$usuario->getPlainPassword()) {
+            return;
+        }
+
+        $hashedPassword = $this->passwordHasher->hashPassword(
+            $usuario,
+            $usuario->getPlainPassword()
+        );
+
+        $usuario->setPassword($hashedPassword);
+        $usuario->eraseCredentials();
+    }
 }
