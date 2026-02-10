@@ -13,7 +13,6 @@ use App\Entity\Producto;
 use App\Entity\Usuario;
 use App\Entity\Pedido;
 
-
 #[AdminDashboard(routePath: '/dashboard', routeName: 'dashboard')]
 class DashboardController extends AbstractDashboardController {
 
@@ -40,6 +39,7 @@ class DashboardController extends AbstractDashboardController {
     }
 
     # Configuración del dashboard 
+
     public function configureDashboard(): Dashboard {
         return Dashboard::new()
                         ->setTitle('Tienda de Libros y Cómics')
@@ -47,11 +47,13 @@ class DashboardController extends AbstractDashboardController {
     }
 
     # Enlaces a los demás dashboards
+
     public function configureMenuItems(): iterable {
         yield MenuItem::linkToDashboard('Dashboard', 'fa fa-home');
         yield MenuItem::linkToCrud('Categorías', 'fas fa-list', Categoria::class);
         yield MenuItem::linkToCrud('Productos', 'fas fa-list', Producto::class);
         yield MenuItem::linkToCrud('Usuarios', 'fas fa-list', Usuario::class);
-        yield MenuItem::linkToCrud('Pedidos', 'fas fa-list', Pedido::class);
+        yield MenuItem::linkToCrud('Pedidos', 'fas fa-list', Pedido::class)
+                        ->setPermission('ROLE_ADMIN');
     }
 }
