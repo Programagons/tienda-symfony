@@ -7,6 +7,8 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
+
 
 class PedidoCrudController extends AbstractCrudController
 {
@@ -25,4 +27,13 @@ class PedidoCrudController extends AbstractCrudController
         ];
     }
     */
+    
+            public function configureFilters(Filters $filters): Filters
+    {
+            return $filters
+                    ->add('coste')
+                    ->add('fecha')
+                    ->add('cod');
+
+    }
 }

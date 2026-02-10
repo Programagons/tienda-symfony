@@ -39,12 +39,14 @@ class DashboardController extends AbstractDashboardController {
         // return $this->render('some/path/my-dashboard.html.twig');
     }
 
+    # Configuración del dashboard 
     public function configureDashboard(): Dashboard {
         return Dashboard::new()
                         ->setTitle('Tienda de Libros y Cómics')
                         ->disableUrlSignatures();
     }
 
+    # Enlaces a los demás dashboards
     public function configureMenuItems(): iterable {
         yield MenuItem::linkToDashboard('Dashboard', 'fa fa-home');
         yield MenuItem::linkToCrud('Categorías', 'fas fa-list', Categoria::class);
