@@ -37,7 +37,7 @@ security:
     # Note: Only the *first* access control that matches will be used
     access_control:
       # Descomentamos esta línea para dar permisos al administrador
-         - { path: ^/admin, roles: ROLE_ADMIN }
+         - { path: ^/dashboard, roles: ROLE_ADMIN }
         # - { path: ^/profile, roles: ROLE_USER }
 
 when@test:

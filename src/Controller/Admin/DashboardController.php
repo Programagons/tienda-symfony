@@ -13,6 +13,7 @@ use App\Entity\Producto;
 use App\Entity\Usuario;
 use App\Entity\Pedido;
 
+
 #[AdminDashboard(routePath: '/dashboard', routeName: 'dashboard')]
 class DashboardController extends AbstractDashboardController {
 

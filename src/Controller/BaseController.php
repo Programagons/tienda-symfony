@@ -178,7 +178,7 @@ final class BaseController extends AbstractController {
         ]);
     }
 
-    #[Route('/historial', name: 'historial')]
+    #[Route('/historial', name: 'historial')] # Esto podría hacerse usando el getPedidos de usuario
     public function historial(EntityManagerInterface $em): Response {
         # Obtenemos el usuario logueado
         $usuario = $this->getUser();
