@@ -42,12 +42,24 @@ RUN curl -sS https://getcomposer.org/installer | php \
     && chown -R www-data:www-data /var/www/html \
     && chmod -R 777 /var/www/html/var
     
-# Copiamos configuraci�n de Xdebug
+# Copiamos configuraci   n de Xdebug
 COPY ./xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
 
+# Copiamos a la imagen el fichero de configuracion del virtualhost
+COPY ./config/default-ssl.conf /etc/apache2/sites-available/default-ssl.conf
 
-# Exponemos el puerto 80 para el tráfico HTTP
+# Activamos el modulo ssl
+RUN a2enmod ssl
+
+# Creamos el directorio raiz y lo activamos
+RUN a2dissite 000-default && a2ensite default-ssl
+
+# El contenedor escucha en los puertos TCP 80 y 443
+EXPOSE 443
+
+# Exponemos el puerto 80 para el tr  fico HTTP
 EXPOSE 80
 
 # Iniciamos el servidor Apache en primer plano
 CMD ["apache2-foreground"]
+

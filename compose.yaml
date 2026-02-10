@@ -5,9 +5,11 @@ services:
     container_name: webserver
     ports:
       - "80:80"
-#      - "9003:9003"
+      - "9003:9003"
+      - "443:443"
     volumes:
       - .:/var/www/html
+      - ../certs:/etc/letsencrypt:ro
     networks:
       - web_network
     restart: always
